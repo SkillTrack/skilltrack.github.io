@@ -54,6 +54,15 @@
 
         //TODO Handle storage events!
 
+        if (!String.prototype.format) {
+            String.prototype.format = function() {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function(match, number) {
+                    return typeof args[number] != 'undefined' ? args[number] : match ;
+                });
+            };
+        }
+
         // Where Skills are stored internally.
         var skills = {};
 
@@ -115,8 +124,8 @@
             the next int = e^floor(ln(val)+1)
             */
 
-            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"" + name + "\", \"" + id + "\");'><span class='fa fa-ban'></span></td><td><div>" + name + "<div class='level'>Lv " + level + "</div></div><br /><progress value='" + (experience - previous) + "' max='" + (next - previous) + "'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"" + name + "\", \"" + id + "\");'><span class='fa fa-plus-circle'></span></button></td>";
-        };
+            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(name, id, level, (experience - previous), (next - previous));
+        }
 
         // Internal (bad design): Create initial skill DOM elements.
         var nextID = 0; //shitty thing
