@@ -1,0 +1,194 @@
+<html>
+<head>
+    <title>Skill Manager</title>
+
+    <link rel="stylesheet" href="https://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <style>
+        .button-plus {
+            background: rgb(28, 184, 65); /* green */
+        }
+        .button-delete {
+            background: rgb(202, 60, 60); /* maroon */
+        }
+        .level {
+            float: right;
+            color: #666;
+            font-weight: bold;
+        }
+        .centered {
+            margin: auto;
+        }
+        /*
+        .pop {
+            position: absolute;
+            width: 300px;
+            height: 200px;
+            z-index: 15;
+            top: 50%;
+            left: 50%;
+            margin: -100px 0 0 -150px;
+            background: #666;
+            text-align: center;
+        }
+        */
+    </style>
+</head>
+<body>
+    <!--<div class='pop'>Test alert!</div>-->
+    <div class='centered'>
+        <table class="pure-table">
+            <thead>
+                <tr>
+                    <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
+                    <th>Skill</th>
+                    <th><button class="pure-button"><span class="fa fa-plus-circle"></span></button></th>
+                </tr>
+            </thead>
+
+            <tbody id="skillsBody"></tbody>
+            <tfoot>
+                <tr>
+                    <td><button class="pure-button button-delete pure-button-disabled"><span class="fa fa-ban"></span></button></td>
+                    <td><input type="text" placeholder="New Skill" id="newSkill" onkeydown="if (event.keyCode == 13) newSkill();"></input></td>
+                    <td><button class="pure-button button-plus" onclick="javascript:newSkill();"><span class="fa fa-plus-circle"></span></button></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <script>
+        //HACK TEMPORARY WIPING OF LOCAL STORAGE FOR TESTING
+        //localStorage.removeItem("skills");
+
+        //TODO Handle storage events!
+
+        // Where Skills are stored internally.
+        var skills = {};
+
+        function loadSkills() {
+            var loaded = localStorage.getItem("skills");
+            if (loaded != null) {
+                skills = JSON.parse(loaded);
+            } else {
+                createSkill("Example Skill");
+            }
+
+            for (var skill in skills) {
+                createSkillDOM(skill, skills[skill]);
+            }
+        };
+
+        function saveSkills() {
+            var saveable = JSON.stringify(skills);
+            localStorage.setItem("skills", saveable);
+        };
+
+        function createSkill(name) {
+            skills[name] = 0;
+            saveSkills();
+        };
+
+        function deleteSkill(name) {
+            delete skills[name];
+            saveSkills();
+        };
+
+        function writeSkillInnerHTML(element, name, experience, id) {
+            /*
+            var level = Math.ceil(Math.log(experience + 1));
+            var previous = Math.floor(Math.pow(Math.E, level));
+            var next = Math.floor(Math.pow(Math.E, level+1));
+            //*/
+            //*
+            var level = Math.ceil(Math.sqrt(experience + 1) - 1);
+            var previous = Math.pow(level, 2);
+            var next = Math.pow(level+1, 2);
+            //*/
+            //console.log(level, previous, experience, next);
+            /*
+            log base 10 of 10 is 1
+            log base 10 of 100 is 2
+            log base 10 of 1000 is 3
+
+            log base e of e is 1
+            log base e of e^2 is 2
+            log base e of e^3 is 3
+
+            the previous int = e^floor(ln(val))
+            the next int = e^floor(ln(val)+1)
+            */
+
+            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"" + name + "\", \"" + id + "\");'><span class='fa fa-ban'></span></td><td><div>" + name + "<div class='level'>Lv " + level + "</div></div><br /><progress value='" + (experience - previous) + "' max='" + (next - previous) + "'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"" + name + "\", \"" + id + "\");'><span class='fa fa-plus-circle'></span></button></td>";
+        }
+
+        var nextID = 0; //shitty thing
+        function createSkillDOM(name, experience) {
+            var skill = document.createElement("tr");
+            skill.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
+            writeSkillInnerHTML(skill, name, experience, "id"+nextID); //this is even worse!
+
+            var skillsParent = document.getElementById("skillsBody");
+            skillsParent.appendChild(skill);
+
+            nextID++;
+        };
+
+        function newSkill() {
+            var element = document.getElementById("newSkill");
+            if (element.value == "") {
+                console.log("Attempt to create null skill: '" + element.value + "'");
+
+                alert("Please enter a name for the skill!");
+            } else {
+                if (typeof skills[element.value] != "undefined") {
+                    console.log("Attempt to create an existing skill: '" + element.value + "'");
+
+                    alert("Please enter a UNIQUE name for each skill!");
+                } else {
+                    createSkill(element.value);
+                    createSkillDOM(element.value, 0);
+
+                    element.value = "";
+                    element.focus();
+                }
+            }
+        };
+
+        function removeSkill(skill, id) {
+            var element = document.getElementById(id);
+            element.parentNode.removeChild(element);
+
+            deleteSkill(skill);
+        };
+
+        function skillUp(skill, id) {
+            if (typeof skills[skill] == "number") {
+                skills[skill]++;
+                console.log(skill + " has gained an experience! " + skills[skill]);
+                saveSkills();
+
+                writeSkillInnerHTML(document.getElementById(id), skill, skills[skill], id); //this is terrible!
+            } else {
+                console.error("skills['" + skill + "'] is not a number!");
+            }
+        };
+
+        function removeAllSkills() {
+            if (confirm("Are you sure you want to delete all skills and start over?")) {
+                var element = document.getElementById("skillsBody");
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+
+                for (var skill in skills) {
+                    deleteSkill(skill);
+                }
+            }
+        };
+
+        loadSkills();
+    </script>
+</body>
+</html>
