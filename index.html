@@ -33,30 +33,20 @@
             text-align: center;
         }
         */
-    </style>
-</head>
-<body>
-    <!--<div class='pop'>Test alert!</div>-->
-    <div class='centered'>
-        <table class="pure-table">
-            <thead>
-                <tr>
-                    <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
-                    <th>Skill</th>
-                    <th><button class="pure-button"><span class="fa fa-plus-circle"></span></button></th>
-                </tr>
-            </thead>
 
-            <tbody id="skillsBody"></tbody>
-            <tfoot>
-                <tr>
-                    <td><button class="pure-button button-delete pure-button-disabled"><span class="fa fa-ban"></span></button></td>
-                    <td><input type="text" placeholder="New Skill" id="newSkill" onkeydown="if (event.keyCode == 13) newSkill();"></input></td>
-                    <td><button class="pure-button button-plus" onclick="javascript:newSkill();"><span class="fa fa-plus-circle"></span></button></td>
-                </tr>
-            </tfoot>
-        </table>
-    </div>
+        /*EXPERIMENTING, IGNORE THIS SHIT KIDS, er, adults*/
+
+        @keyframes test {
+            0% {background: red;}
+            100% {background: green;}
+        }
+
+        /*div {
+            background: orange;
+            animation-name: test;
+            animation-duration: 4s;
+        }*/
+    </style>
 
     <script>
         //HACK TEMPORARY WIPING OF LOCAL STORAGE FOR TESTING
@@ -198,7 +188,32 @@
             }
         };
 
-        loadSkills();
+        window.onload = loadSkills();
     </script>
+</head>
+<body>
+    <!--<div class='pop'>Test alert!</div>-->
+    <div class='centered'>
+        <table class="pure-table">
+            <thead>
+                <tr>
+                    <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
+                    <th>Skill</th>
+                    <th><button class="pure-button" onclick="javascript:activateIdle();"><span class="fa fa-plus-circle"></span></button></th>
+                </tr>
+            </thead>
+
+            <tbody id="skillsBody"></tbody>
+            <tfoot>
+                <tr>
+                    <td><button class="pure-button button-delete pure-button-disabled"><span class="fa fa-ban"></span></button></td>
+                    <td><input type="text" placeholder="New Skill" id="newSkill" onkeydown="if (event.keyCode == 13) newSkill();"></input></td>
+                    <td><button class="pure-button button-plus" onclick="javascript:newSkill();"><span class="fa fa-plus-circle"></span></button></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <script src="js/idle.js"></script>
 </body>
 </html>
