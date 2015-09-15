@@ -1,0 +1,160 @@
+<html>
+<head>
+    <title>Tasks - SkillTrack</title>
+
+    <link rel="stylesheet" href="./css/pure-0.6.0-min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+    <style>
+        .button-new {
+            background: rgb(12, 160, 45); /* darker green */
+        }
+        .button-done {
+            background: rgb(30, 204, 69); /* green */
+        }
+        .button-delete {
+            background: rgb(202, 60, 60); /* maroon */
+        }
+        .level {
+            float: right;
+            color: #666;
+            font-weight: bold;
+        }
+        .centered {
+            margin: auto;
+        }
+    </style>
+
+    <script>
+        //HACK TEMPORARY DELETING LOCAL STORAGE FOR TESTING
+        //localStorage.removeItem("tasks");
+
+        //TODO Handle storage events!
+
+        if (!String.prototype.format) {
+            String.prototype.format = function() {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function(match, number) {
+                    return typeof args[number] != 'undefined' ? args[number] : match ;
+                });
+            };
+        }
+
+        // Where tasks are stored internally.
+        var tasks = {};
+
+        // Internal: Load tasks from localStorage.
+        function loadTasks() {
+            var loaded = localStorage.getItem("tasks");
+            if (loaded != null) {
+                tasks = JSON.parse(loaded);
+            } else {
+                createTask("Example Task");
+            }
+
+            for (var task in tasks) {
+                createTaskDOM(task, tasks[task]);
+            }
+        };
+
+        // Internal: Save tasks to localStorage.
+        function saveTasks() {
+            var saveable = JSON.stringify(tasks);
+            localStorage.setItem("tasks", saveable);
+        };
+
+        // Internal: Create task.
+        function createTask(task) {
+            tasks[task] = 0;
+            saveTasks();
+        };
+
+        // Internal: Delete task.
+        function deleteTask(task) {
+            delete tasks[task];
+            saveTasks();
+        };
+
+        // Internal (bad design): Create initial task DOM elements.
+        var nextID = 0; //shitty thing
+        function createTaskDOM(task) {
+            var element = document.createElement("tr");
+            element.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
+            element.innerHTML = "<td><button class='pure-button button-done' onclick='javascript:removeTask(\"{0}\", \"{1}\");'><span class='fa fa-check-circle'></span></button></td><td>{0}</td>".format(task, "id"+nextID);
+
+            var taskList = document.getElementById("taskList");
+            taskList.appendChild(element);
+
+            nextID++;
+        };
+
+        // Interface: Creates a new task, resets 'new task' input.
+        function newTask() {
+            var element = document.getElementById("newTask");
+            if (element.value == "") {
+                console.log("Attempt to create null task: '" + element.value + "'");
+
+                alert("Please enter a name for the task!");
+            } else {
+                if (typeof tasks[element.value] != "undefined") {
+                    console.log("Attempt to create an existing task: '" + element.value + "'");
+
+                    alert("Please enter a UNIQUE name for each task!");
+                } else {
+                    createTask(element.value);
+                    createTaskDOM(element.value, 0);
+
+                    element.value = "";
+                    element.focus();
+                }
+            }
+        };
+
+        // Interface: Removes (and deletes) a skill.
+        function removeTask(task, id) {
+            var element = document.getElementById(id);
+            element.parentNode.removeChild(element);
+
+            deleteTask(task);
+        };
+
+        // Interface: Prompts, then removes all skills.
+        function removeAllTasks() {
+            if (confirm("Are you sure you want to delete all tasks and start over?")) {
+                var element = document.getElementById("taskList");
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+
+                for (var task in tasks) {
+                    deleteTask(task);
+                }
+            }
+        };
+
+        window.onload = function() {
+            setTimeout(loadTasks, 1);
+        }
+    </script>
+</head>
+<body>
+    <div class='centered'>
+        <table class="pure-table">
+            <thead>
+                <tr>
+                    <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
+                    <th style="font-size:1.35em;">Task</th>
+                </tr>
+            </thead>
+
+            <tbody id="taskList"></tbody>
+            <tfoot>
+                <tr>
+                    <td><button class="pure-button button-new" onclick="javascript:newTask();"><span class="fa fa-plus-circle"></span></button></td>
+                    <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();"></input></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</body>
+</html>
