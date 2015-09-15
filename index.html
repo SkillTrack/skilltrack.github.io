@@ -67,6 +67,7 @@
         // Where Skills are stored internally.
         var skills = {};
 
+        // Internal: Load skills from localStorage.
         function loadSkills() {
             var loaded = localStorage.getItem("skills");
             if (loaded != null) {
@@ -80,21 +81,25 @@
             }
         };
 
+        // Internal: Save skills to localStorage.
         function saveSkills() {
             var saveable = JSON.stringify(skills);
             localStorage.setItem("skills", saveable);
         };
 
+        // Internal: Create skill via name.
         function createSkill(name) {
             skills[name] = 0;
             saveSkills();
         };
 
+        // Internal: Delete skill via name.
         function deleteSkill(name) {
             delete skills[name];
             saveSkills();
         };
 
+        // Internal (bad design): Helper to write innerHTML on skill DOM elements.
         function writeSkillInnerHTML(element, name, experience, id) {
             /*
             var level = Math.ceil(Math.log(experience + 1));
@@ -121,8 +126,9 @@
             */
 
             element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"" + name + "\", \"" + id + "\");'><span class='fa fa-ban'></span></td><td><div>" + name + "<div class='level'>Lv " + level + "</div></div><br /><progress value='" + (experience - previous) + "' max='" + (next - previous) + "'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"" + name + "\", \"" + id + "\");'><span class='fa fa-plus-circle'></span></button></td>";
-        }
+        };
 
+        // Internal (bad design): Create initial skill DOM elements.
         var nextID = 0; //shitty thing
         function createSkillDOM(name, experience) {
             var skill = document.createElement("tr");
@@ -135,6 +141,7 @@
             nextID++;
         };
 
+        // Interface: Creates a new skill, resets 'new skill' input.
         function newSkill() {
             var element = document.getElementById("newSkill");
             if (element.value == "") {
@@ -156,6 +163,7 @@
             }
         };
 
+        // Interface: Removes (and deletes) a skill.
         function removeSkill(skill, id) {
             var element = document.getElementById(id);
             element.parentNode.removeChild(element);
@@ -163,6 +171,7 @@
             deleteSkill(skill);
         };
 
+        // Interface: Adds experience to a skill.
         function skillUp(skill, id) {
             if (typeof skills[skill] == "number") {
                 skills[skill]++;
@@ -175,6 +184,7 @@
             }
         };
 
+        // Interface: Prompts, then removes all skills.
         function removeAllSkills() {
             if (confirm("Are you sure you want to delete all skills and start over?")) {
                 var element = document.getElementById("skillsBody");
