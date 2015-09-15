@@ -12,6 +12,9 @@
         .button-delete {
             background: rgb(202, 60, 60); /* maroon */
         }
+        .header-text {
+            font-size: 1.35em !important;
+        }
         .level {
             float: right;
             color: #666;
@@ -20,32 +23,6 @@
         .centered {
             margin: auto;
         }
-        /*
-        .pop {
-            position: absolute;
-            width: 300px;
-            height: 200px;
-            z-index: 15;
-            top: 50%;
-            left: 50%;
-            margin: -100px 0 0 -150px;
-            background: #666;
-            text-align: center;
-        }
-        */
-
-        /*EXPERIMENTING, IGNORE THIS SHIT KIDS, er, adults*/
-
-        @keyframes test {
-            0% {background: red;}
-            100% {background: green;}
-        }
-
-        /*div {
-            background: orange;
-            animation-name: test;
-            animation-duration: 4s;
-        }*/
     </style>
 
     <script>
@@ -63,6 +40,14 @@
             };
         }
 
+        function isEmpty(obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) return false;
+            }
+
+            return true;
+        }
+
         // Where skills are stored internally.
         var skills = {};
 
@@ -71,9 +56,9 @@
             var loaded = localStorage.getItem("skills");
             if (loaded != null) {
                 skills = JSON.parse(loaded);
-            } else {
-                createSkill("Example Skill");
             }
+
+            if (isEmpty(skills)) createSkill("Example Skill");
 
             for (var skill in skills) {
                 createSkillDOM(skill, skills[skill]);
@@ -100,29 +85,9 @@
 
         // Internal (bad design): Helper to write innerHTML of skill DOM elements.
         function writeSkillInnerHTML(element, name, experience, id) {
-            /*
-            var level = Math.ceil(Math.log(experience + 1));
-            var previous = Math.floor(Math.pow(Math.E, level));
-            var next = Math.floor(Math.pow(Math.E, level+1));
-            //*/
-            //*
             var level = Math.ceil(Math.sqrt(experience + 1) - 1);
             var previous = Math.pow(level, 2);
             var next = Math.pow(level+1, 2);
-            //*/
-            //console.log(level, previous, experience, next);
-            /*
-            log base 10 of 10 is 1
-            log base 10 of 100 is 2
-            log base 10 of 1000 is 3
-
-            log base e of e is 1
-            log base e of e^2 is 2
-            log base e of e^3 is 3
-
-            the previous int = e^floor(ln(val))
-            the next int = e^floor(ln(val)+1)
-            */
 
             element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(name, id, level, (experience - previous), (next - previous));
         }
@@ -204,13 +169,12 @@
     </script>
 </head>
 <body>
-    <!--<div class='pop'>Test alert!</div>-->
     <div class='centered'>
         <table class="pure-table">
             <thead>
                 <tr>
                     <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
-                    <th style="font-size:1.35em;">Skill</th>
+                    <th class="header-text">Skill</th>
                     <th><button class="pure-button" onclick="javascript:activateIdle();"><span class="fa fa-plus-circle"></span></button></th>
                 </tr>
             </thead>

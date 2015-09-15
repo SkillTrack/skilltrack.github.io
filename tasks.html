@@ -10,10 +10,13 @@
             background: rgb(12, 160, 45); /* darker green */
         }
         .button-done {
-            background: rgb(30, 204, 69); /* green */
+            background: rgb(30, 204, 69); /* lighter green */
         }
         .button-delete {
             background: rgb(202, 60, 60); /* maroon */
+        }
+        .header-text {
+            font-size: 1.35em !important;
         }
         .level {
             float: right;
@@ -40,6 +43,14 @@
             };
         }
 
+        function isEmpty(obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop)) return false;
+            }
+
+            return true;
+        }
+
         // Where tasks are stored internally.
         var tasks = {};
 
@@ -48,9 +59,9 @@
             var loaded = localStorage.getItem("tasks");
             if (loaded != null) {
                 tasks = JSON.parse(loaded);
-            } else {
-                createTask("Example Task");
             }
+
+            if (isEmpty(tasks)) createTask("Example Task");
 
             for (var task in tasks) {
                 createTaskDOM(task, tasks[task]);
@@ -143,7 +154,7 @@
             <thead>
                 <tr>
                     <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
-                    <th style="font-size:1.35em;">Task</th>
+                    <th class="header-text">Task</th>
                 </tr>
             </thead>
 
