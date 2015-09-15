@@ -63,7 +63,7 @@
             };
         }
 
-        // Where Skills are stored internally.
+        // Where skills are stored internally.
         var skills = {};
 
         // Internal: Load skills from localStorage.
@@ -98,7 +98,7 @@
             saveSkills();
         };
 
-        // Internal (bad design): Helper to write innerHTML on skill DOM elements.
+        // Internal (bad design): Helper to write innerHTML of skill DOM elements.
         function writeSkillInnerHTML(element, name, experience, id) {
             /*
             var level = Math.ceil(Math.log(experience + 1));
@@ -130,12 +130,12 @@
         // Internal (bad design): Create initial skill DOM elements.
         var nextID = 0; //shitty thing
         function createSkillDOM(name, experience) {
-            var skill = document.createElement("tr");
-            skill.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
-            writeSkillInnerHTML(skill, name, experience, "id"+nextID); //this is even worse!
+            var element = document.createElement("tr");
+            element.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
+            writeSkillInnerHTML(element, name, experience, "id"+nextID); //this is even worse!
 
             var skillsParent = document.getElementById("skillsBody");
-            skillsParent.appendChild(skill);
+            skillsParent.appendChild(element);
 
             nextID++;
         };
@@ -210,7 +210,7 @@
             <thead>
                 <tr>
                     <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
-                    <th>Skill</th>
+                    <th style="font-size:1.35em;">Skill</th>
                     <th><button class="pure-button" onclick="javascript:activateIdle();"><span class="fa fa-plus-circle"></span></button></th>
                 </tr>
             </thead>
