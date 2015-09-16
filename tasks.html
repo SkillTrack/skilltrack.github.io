@@ -5,31 +5,9 @@
     <link rel="stylesheet" href="./css/pure-0.6.0-min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-    <style>
-        .button-info {
-            background: rgb(66, 184, 221); /* light blue */
-        }
-        .button-new {
-            background: rgb(12, 160, 45); /* darker green */
-        }
-        .button-done {
-            background: rgb(30, 204, 69); /* lighter green */
-        }
-        .button-delete {
-            background: rgb(202, 60, 60); /* maroon */
-        }
-        .header-text {
-            font-size: 1.35em !important;
-        }
-        .level {
-            float: right;
-            color: #666;
-            font-weight: bold;
-        }
-        .centered {
-            margin: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script src="./js/util.js"></script>
 
     <script>
         //HACK TEMPORARY DELETING LOCAL STORAGE FOR TESTING
@@ -37,31 +15,17 @@
 
         //TODO Handle storage events!
 
-        if (!String.prototype.format) {
-            String.prototype.format = function() {
-                var args = arguments;
-                return this.replace(/{(\d+)}/g, function(match, number) {
-                    return typeof args[number] != 'undefined' ? args[number] : match ;
-                });
-            };
-        }
-
-        function isEmpty(obj) {
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop)) return false;
-            }
-
-            return true;
-        }
-
         // Where tasks are stored internally.
         var tasks = {};
 
         // Internal: Load tasks from localStorage.
         function loadTasks() {
             var loaded = localStorage.getItem("tasks");
+
             if (loaded != null) {
                 tasks = JSON.parse(loaded);
+
+                console.log("Tasks loaded: {0}".format(loaded));
             }
 
             if (isEmpty(tasks)) createTask("Example Task");
@@ -75,18 +39,24 @@
         function saveTasks() {
             var saveable = JSON.stringify(tasks);
             localStorage.setItem("tasks", saveable);
+
+            console.log("Tasks saved.");
         };
 
         // Internal: Create task.
         function createTask(task) {
             tasks[task] = 0;
             saveTasks();
+
+            console.log("Task created: {0}".format(task));
         };
 
         // Internal: Delete task.
         function deleteTask(task) {
             delete tasks[task];
             saveTasks();
+
+            console.log("Task deleted: {0}".format(task));
         };
 
         // Internal (bad design): Create initial task DOM elements.
@@ -106,14 +76,14 @@
         function newTask() {
             var element = document.getElementById("newTask");
             if (element.value == "") {
-                console.log("Attempt to create null task: '" + element.value + "'");
-
                 alert("Please enter a name for the task!");
+
+                console.log("Attempt to create null task: '{0}'".format(element.value));
             } else {
                 if (typeof tasks[element.value] != "undefined") {
-                    console.log("Attempt to create an existing task: '" + element.value + "'");
-
                     alert("Please enter a UNIQUE name for each task!");
+
+                    console.log("Attempt to create an existing task: '{0}'".format(element.value));
                 } else {
                     createTask(element.value);
                     createTaskDOM(element.value, 0);
@@ -136,6 +106,7 @@
         function removeAllTasks() {
             if (confirm("Are you sure you want to delete all tasks and start over?")) {
                 var element = document.getElementById("taskList");
+
                 while (element.firstChild) {
                     element.removeChild(element.firstChild);
                 }
@@ -143,6 +114,8 @@
                 for (var task in tasks) {
                     deleteTask(task);
                 }
+
+                console.log("All tasks deleted.");
             }
         };
 
@@ -157,8 +130,7 @@
             <thead>
                 <tr>
                     <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
-                    <th class="header-text">Task</th>
-                    <th><button class="pure-button button-info"><span class="fa fa-exclamation-circle"></span></button></th>
+                    <th class="header-text">Tasks</th>
                 </tr>
             </thead>
 
@@ -167,16 +139,6 @@
                 <tr>
                     <td><button class="pure-button button-new" onclick="javascript:newTask();"><span class="fa fa-plus-circle"></span></button></td>
                     <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();"></input></td>
-                    <td>
-                        <select>
-                            <option value="0" selected>None</option>
-                            <option value="1">(1) Maximum</option>
-                            <option value="2">(2) High</option>
-                            <option value="3">(3) Medium</option>
-                            <option value="4">(4) Low</option>
-                            <option value="2">(5) Minimum</option>
-                        </select>
-                    </td>
                 </tr>
             </tfoot>
         </table>

@@ -5,48 +5,12 @@
     <link rel="stylesheet" href="./css/pure-0.6.0-min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-    <style>
-        .button-plus {
-            background: rgb(28, 184, 65); /* green */
-        }
-        .button-delete {
-            background: rgb(202, 60, 60); /* maroon */
-        }
-        .header-text {
-            font-size: 1.35em !important;
-        }
-        .level {
-            float: right;
-            color: #666;
-            font-weight: bold;
-        }
-        .centered {
-            margin: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script src="./js/util.js"></script>
 
     <script>
-        //HACK TEMPORARY WIPING OF LOCAL STORAGE FOR TESTING
-        //localStorage.removeItem("skills");
-
         //TODO Handle storage events!
-
-        if (!String.prototype.format) {
-            String.prototype.format = function() {
-                var args = arguments;
-                return this.replace(/{(\d+)}/g, function(match, number) {
-                    return typeof args[number] != 'undefined' ? args[number] : match ;
-                });
-            };
-        }
-
-        function isEmpty(obj) {
-            for (var prop in obj) {
-                if (obj.hasOwnProperty(prop)) return false;
-            }
-
-            return true;
-        }
 
         // Where skills are stored internally.
         var skills = {};
@@ -54,8 +18,11 @@
         // Internal: Load skills from localStorage.
         function loadSkills() {
             var loaded = localStorage.getItem("skills");
+
             if (loaded != null) {
                 skills = JSON.parse(loaded);
+
+                console.log("Skills loaded: {0}".format(loaded));
             }
 
             if (isEmpty(skills)) createSkill("Example Skill");
@@ -69,27 +36,38 @@
         function saveSkills() {
             var saveable = JSON.stringify(skills);
             localStorage.setItem("skills", saveable);
+
+            console.log("Skills saved.");
         };
 
-        // Internal: Create skill via name.
-        function createSkill(name) {
-            skills[name] = 0;
+        // Internal: Create skill.
+        function createSkill(skill) {
+            skills[skill] = 0;
             saveSkills();
+
+            console.log("Skill created: {0}".format(skill));
         };
 
-        // Internal: Delete skill via name.
-        function deleteSkill(name) {
-            delete skills[name];
+        // Internal: Delete skill.
+        function deleteSkill(skill) {
+            delete skills[skill];
             saveSkills();
+
+            console.log("Skill deleted: {0}".format(skill));
         };
 
         // Internal (bad design): Helper to write innerHTML of skill DOM elements.
-        function writeSkillInnerHTML(element, name, experience, id) {
+        function writeSkillInnerHTML(element, skill, experience, id) {
             var level = Math.ceil(Math.sqrt(experience + 1) - 1);
             var previous = Math.pow(level, 2);
             var next = Math.pow(level+1, 2);
 
-            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(name, id, level, (experience - previous), (next - previous));
+            //var current = (experience - previous);
+            //var toNext = (next - previous);
+
+            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(skill, id, level, (experience - previous), (next - previous));
+
+            console.log("{0}, Lv {1}. Previous Lv, Experience, Next Lv: {2}, {3}, {4}. {5} of {6} experience to next level.".format(skill, level, previous, experience, next, (experience - previous), (next - previous)));
         }
 
         // Internal (bad design): Create initial skill DOM elements.
@@ -109,14 +87,14 @@
         function newSkill() {
             var element = document.getElementById("newSkill");
             if (element.value == "") {
-                console.log("Attempt to create null skill: '" + element.value + "'");
-
                 alert("Please enter a name for the skill!");
+
+                console.log("Attempt to create null skill: '{0}'".format(element.value));
             } else {
                 if (typeof skills[element.value] != "undefined") {
-                    console.log("Attempt to create an existing skill: '" + element.value + "'");
-
                     alert("Please enter a UNIQUE name for each skill!");
+
+                    console.log("Attempt to create an existing skill: '{0}'".format(element.value));
                 } else {
                     createSkill(element.value);
                     createSkillDOM(element.value, 0);
@@ -136,15 +114,17 @@
         };
 
         // Interface: Adds experience to a skill.
+        //TODO make skillUp no longer access skills[skill] directly if possible ???
         function skillUp(skill, id) {
             if (typeof skills[skill] == "number") {
                 skills[skill]++;
-                console.log(skill + " has gained an experience! " + skills[skill]);
                 saveSkills();
 
                 writeSkillInnerHTML(document.getElementById(id), skill, skills[skill], id); //this is terrible!
+
+                console.log("{0} has gained an experience point! Now at {1} experience.".format(skill, skills[skill]));
             } else {
-                console.error("skills['" + skill + "'] is not a number!");
+                console.error("skills['{0}'] is not a number!".format(skill));
             }
         };
 
@@ -152,6 +132,7 @@
         function removeAllSkills() {
             if (confirm("Are you sure you want to delete all skills and start over?")) {
                 var element = document.getElementById("skillsBody");
+
                 while (element.firstChild) {
                     element.removeChild(element.firstChild);
                 }
@@ -159,10 +140,11 @@
                 for (var skill in skills) {
                     deleteSkill(skill);
                 }
+
+                console.log("All skills deleted.");
             }
         };
 
-        //window.onload = loadSkills();
         window.onload = function() {
             setTimeout(loadSkills, 1);
         }
@@ -174,7 +156,7 @@
             <thead>
                 <tr>
                     <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
-                    <th class="header-text">Skill</th>
+                    <th class="header-text">Skills</th>
                     <th><button class="pure-button" onclick="javascript:activateIdle();"><span class="fa fa-plus-circle"></span></button></th>
                 </tr>
             </thead>
