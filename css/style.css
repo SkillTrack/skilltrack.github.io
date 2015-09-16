@@ -10,6 +10,12 @@
 .button-delete {
     background: rgb(202, 60, 60); /* maroon */
 }
+.button-info {
+    background: rgb(66, 184, 221); /* light blue */
+}
+
+
+
 .header-text {
     font-size: 1.35em !important;
 }
@@ -20,4 +26,25 @@
 }
 .centered {
     margin: auto;
+}
+
+
+
+.priority0 {
+    background: rgb(245, 250, 255);
+}
+.priority1 {
+    background: rgb(255, 200, 200); /* light red */
+}
+.priority2 {
+    background: rgb(255, 230, 200); /* light orange */
+}
+.priority3 {
+    background: rgb(255, 255, 200); /* light yellow */
+}
+.priority4 {
+    background: rgb(200, 255, 200); /* light green */
+}
+.priority5 {
+    background: rgb(200, 200, 255); /* light blue */
 }

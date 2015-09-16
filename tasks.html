@@ -31,7 +31,7 @@
             if (isEmpty(tasks)) createTask("Example Task");
 
             for (var task in tasks) {
-                createTaskDOM(task, tasks[task]);
+                createTaskDOM(task, "priority"+tasks[task]);
             }
         };
 
@@ -44,8 +44,10 @@
         };
 
         // Internal: Create task.
-        function createTask(task) {
-            tasks[task] = 0;
+        function createTask(task, priority) {
+            if (priority == null) priority = 0;
+
+            tasks[task] = priority;
             saveTasks();
 
             console.log("Task created: {0}".format(task));
@@ -61,10 +63,15 @@
 
         // Internal (bad design): Create initial task DOM elements.
         var nextID = 0; //shitty thing
-        function createTaskDOM(task) {
+        function createTaskDOM(task, priorityClass) {
             var element = document.createElement("tr");
             element.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
-            element.innerHTML = "<td><button class='pure-button button-done' onclick='javascript:removeTask(\"{0}\", \"{1}\");'><span class='fa fa-check-circle'></span></button></td><td>{0}</td>".format(task, "id"+nextID);
+            element.className = priorityClass;
+
+            element.innerHTML = "<td><button class='pure-button button-done' onclick='javascript:removeTask(\"{0}\", \"{1}\");'><span class='fa fa-check-circle'></span></button></td><td>{0}</td><td><select onchange='changePriority(\"{0}\", \"{1}\", arguments[0]);'><option value='0'>None</option><option value='1'>(1) Maximum</option><option value='2'>(2) High</option><option value='3'>(3) Medium</option><option value='4'>(4) Low</option><option value='5'>(5) Minimum</option></select></td>".format(task, "id"+nextID);
+
+            //convoluted as fuck: Tr -> Td -> Select -> Option[priority] -> "selected"
+            element.childNodes[2].childNodes[0].childNodes[priorityClass.slice(8)].setAttribute("selected", "selected");
 
             var taskList = document.getElementById("taskList");
             taskList.appendChild(element);
@@ -85,8 +92,11 @@
 
                     console.log("Attempt to create an existing task: '{0}'".format(element.value));
                 } else {
-                    createTask(element.value);
-                    createTaskDOM(element.value, 0);
+                    var className = document.getElementById("newTaskRow").className;
+                    if (className == "") className = "priority0";
+
+                    createTask(element.value, className.slice(8));
+                    createTaskDOM(element.value, className);
 
                     element.value = "";
                     element.focus();
@@ -121,7 +131,22 @@
 
         window.onload = function() {
             setTimeout(loadTasks, 1);
-        }
+        };
+
+        function changePriority(task, id, event) {
+            var priority = event.path[0].value;
+
+            if (task != null) {
+                //duplicated code from createTask() :\
+                tasks[task] = priority;
+                saveTasks();
+
+                console.log("{0} priority changed to {1}".format(task, priority));
+            }
+
+            var element = document.getElementById(id);
+            element.className = "priority"+priority;
+        };
     </script>
 </head>
 <body>
@@ -131,14 +156,25 @@
                 <tr>
                     <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
                     <th class="header-text">Tasks</th>
+                    <th><button class="pure-button button-info"><span class="fa fa-exclamation-circle"></span></button></th>
                 </tr>
             </thead>
 
             <tbody id="taskList"></tbody>
             <tfoot>
-                <tr>
+                <tr id="newTaskRow">
                     <td><button class="pure-button button-new" onclick="javascript:newTask();"><span class="fa fa-plus-circle"></span></button></td>
                     <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();"></input></td>
+                    <td>
+                        <select onchange="changePriority(null, 'newTaskRow', arguments[0]);">
+                            <option value="0" selected>None</option>
+                            <option value="1">(1) Maximum</option>
+                            <option value="2">(2) High</option>
+                            <option value="3">(3) Medium</option>
+                            <option value="4">(4) Low</option>
+                            <option value="5">(5) Minimum</option>
+                        </select>
+                    </td>
                 </tr>
             </tfoot>
         </table>
