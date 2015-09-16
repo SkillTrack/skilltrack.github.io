@@ -1,0 +1,23 @@
+.button-new {
+    background: rgb(12, 160, 45); /* darker green */
+}
+.button-plus {
+    background: rgb(28, 184, 65); /* green */
+}
+.button-done {
+    background: rgb(30, 204, 69); /* lighter green */
+}
+.button-delete {
+    background: rgb(202, 60, 60); /* maroon */
+}
+.header-text {
+    font-size: 1.35em !important;
+}
+.level {
+    float: right;
+    color: #666;
+    font-weight: bold;
+}
+.centered {
+    margin: auto;
+}
