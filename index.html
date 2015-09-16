@@ -57,12 +57,17 @@
         };
 
         // Internal (bad design): Helper to write innerHTML of skill DOM elements.
-        function writeSkillInnerHTML(element, name, experience, id) {
+        function writeSkillInnerHTML(element, skill, experience, id) {
             var level = Math.ceil(Math.sqrt(experience + 1) - 1);
             var previous = Math.pow(level, 2);
             var next = Math.pow(level+1, 2);
 
-            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(name, id, level, (experience - previous), (next - previous));
+            //var current = (experience - previous);
+            //var toNext = (next - previous);
+
+            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(skill, id, level, (experience - previous), (next - previous));
+
+            console.log("{0}, Lv {1}. Previous Lv, Experience, Next Lv: {2}, {3}, {4}. {5} of {6} experience to next level.".format(skill, level, previous, experience, next, (experience - previous), (next - previous)));
         }
 
         // Internal (bad design): Create initial skill DOM elements.
@@ -82,14 +87,14 @@
         function newSkill() {
             var element = document.getElementById("newSkill");
             if (element.value == "") {
-                console.log("Attempt to create null skill: '{0}'".format(element.value));
-
                 alert("Please enter a name for the skill!");
+
+                console.log("Attempt to create null skill: '{0}'".format(element.value));
             } else {
                 if (typeof skills[element.value] != "undefined") {
-                    console.log("Attempt to create an existing skill: '{0}'".format(element.value));
-
                     alert("Please enter a UNIQUE name for each skill!");
+
+                    console.log("Attempt to create an existing skill: '{0}'".format(element.value));
                 } else {
                     createSkill(element.value);
                     createSkillDOM(element.value, 0);
@@ -113,10 +118,11 @@
         function skillUp(skill, id) {
             if (typeof skills[skill] == "number") {
                 skills[skill]++;
-                console.log("{0} has gained an experience point! Now at {1} experience.".format(skill, skills[skill]));
                 saveSkills();
 
                 writeSkillInnerHTML(document.getElementById(id), skill, skills[skill], id); //this is terrible!
+
+                console.log("{0} has gained an experience point! Now at {1} experience.".format(skill, skills[skill]));
             } else {
                 console.error("skills['{0}'] is not a number!".format(skill));
             }
@@ -126,6 +132,7 @@
         function removeAllSkills() {
             if (confirm("Are you sure you want to delete all skills and start over?")) {
                 var element = document.getElementById("skillsBody");
+
                 while (element.firstChild) {
                     element.removeChild(element.firstChild);
                 }
