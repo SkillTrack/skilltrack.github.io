@@ -104,7 +104,23 @@
             }
         };
 
-        // Interface: Removes (and deletes) a skill.
+        // Interface: Changes background color of a task.
+        function changePriority(task, id, event) {
+            var priority = event.path[0].value;
+
+            if (task != null) {
+                //duplicated code from createTask() :\
+                tasks[task] = priority;
+                saveTasks();
+
+                console.log("{0} priority changed to {1}".format(task, priority));
+            }
+
+            var element = document.getElementById(id);
+            element.className = "priority"+priority;
+        };
+
+        // Interface: Removes (and deletes) a task.
         function removeTask(task, id) {
             var element = document.getElementById(id);
             element.parentNode.removeChild(element);
@@ -112,7 +128,7 @@
             deleteTask(task);
         };
 
-        // Interface: Prompts, then removes all skills.
+        // Interface: Prompts, then removes all tasks.
         function removeAllTasks() {
             if (confirm("Are you sure you want to delete all tasks and start over?")) {
                 var element = document.getElementById("taskList");
@@ -131,21 +147,6 @@
 
         window.onload = function() {
             setTimeout(loadTasks, 1);
-        };
-
-        function changePriority(task, id, event) {
-            var priority = event.path[0].value;
-
-            if (task != null) {
-                //duplicated code from createTask() :\
-                tasks[task] = priority;
-                saveTasks();
-
-                console.log("{0} priority changed to {1}".format(task, priority));
-            }
-
-            var element = document.getElementById(id);
-            element.className = "priority"+priority;
         };
     </script>
 </head>
