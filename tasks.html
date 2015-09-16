@@ -131,6 +131,7 @@
                 <tr>
                     <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
                     <th class="header-text">Tasks</th>
+                    <th><button class="pure-button button-info"><span class="fa fa-exclamation-circle"></span></button></th>
                 </tr>
             </thead>
 
@@ -139,6 +140,16 @@
                 <tr>
                     <td><button class="pure-button button-new" onclick="javascript:newTask();"><span class="fa fa-plus-circle"></span></button></td>
                     <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();"></input></td>
+                    <td>
+                        <select>
+                            <option value="0" selected>None</option>
+                            <option value="1">(1) Maximum</option>
+                            <option value="2">(2) High</option>
+                            <option value="3">(3) Medium</option>
+                            <option value="4">(4) Low</option>
+                            <option value="2">(5) Minimum</option>
+                        </select>
+                    </td>
                 </tr>
             </tfoot>
         </table>
