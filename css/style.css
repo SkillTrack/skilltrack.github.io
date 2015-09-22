@@ -21,11 +21,16 @@
 }
 .level {
     float: right;
+    margin-left: 14px;
     color: #666;
     font-weight: bold;
 }
 .centered {
     margin: auto;
+    max-width: 600px;
+}
+.centered > table {
+    width: 100%; /* fuck you css */
 }
 
 
