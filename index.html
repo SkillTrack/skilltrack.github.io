@@ -10,7 +10,21 @@
     <script src="./js/util.js"></script>
 
     <script>
-        //TODO Handle storage events!
+        function handleStorage(e) {
+            if (!e) { e = window.event; } //fuck you IE
+
+            if (e.key == "skills") {
+                // remove DOMs, rebuild from loadSkills()
+
+                var element = document.getElementById("skillsBody");
+
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+
+                loadSkills();
+            }
+        };
 
         // Where skills are stored internally.
         var skills = {};
@@ -147,6 +161,12 @@
 
         window.onload = function() {
             setTimeout(loadSkills, 1);
+
+            if (window.addEventListener) {
+                window.addEventListener("storage", handleStorage, false);
+            } else {
+                window.attachEvent("onstorage", handleStorage);
+            }
         };
     </script>
 </head>

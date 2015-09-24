@@ -10,10 +10,21 @@
     <script src="./js/util.js"></script>
 
     <script>
-        //HACK TEMPORARY DELETING LOCAL STORAGE FOR TESTING
-        //localStorage.removeItem("tasks");
+        function handleStorage(e) {
+            if (!e) { e = window.event; } //fuck you IE
 
-        //TODO Handle storage events!
+            if (e.key == "tasks") {
+                // remove DOMs, rebuild from loadTasks()
+
+                var element = document.getElementById("taskList");
+
+                while (element.firstChild) {
+                    element.removeChild(element.firstChild);
+                }
+
+                loadTasks();
+            }
+        };
 
         // Where tasks are stored internally.
         var tasks = {};
@@ -147,6 +158,12 @@
 
         window.onload = function() {
             setTimeout(loadTasks, 1);
+
+            if (window.addEventListener) {
+                window.addEventListener("storage", handleStorage, false);
+            } else {
+                window.attachEvent("onstorage", handleStorage);
+            }
         };
     </script>
 </head>
