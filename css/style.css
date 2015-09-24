@@ -29,9 +29,6 @@
     margin: auto;
     max-width: 600px;
 }
-.centered > table {
-    width: 100%; /* fuck you css */
-}
 
 
 
