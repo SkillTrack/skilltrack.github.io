@@ -79,7 +79,7 @@
             //var current = (experience - previous);
             //var toNext = (next - previous);
 
-            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");'><span class='fa fa-plus-circle'></span></button></td>".format(skill, id, level, (experience - previous), (next - previous));
+            element.innerHTML = "<td><button class='pure-button button-delete' onclick='javascript:removeSkill(\"{0}\", \"{1}\");' title='Delete this skill.'><span class='fa fa-ban'></span></td><td><div>{0}<div class='level'>Lv {2}</div></div><br /><progress value='{3}' max='{4}'></progress></td><td><button class='pure-button button-plus' onclick='javascript:skillUp(\"{0}\", \"{1}\");' title='+1 xp'><span class='fa fa-plus-circle'></span></button></td>".format(skill, id, level, (experience - previous), (next - previous));
 
             console.log("{0}, Lv {1}. Previous Lv, Experience, Next Lv: {2}, {3}, {4}. {5} of {6} experience to next level.".format(skill, level, previous, experience, next, (experience - previous), (next - previous)));
         }
@@ -174,9 +174,9 @@
     <table class="pure-table centered">
         <thead>
             <tr>
-                <th><button class="pure-button" onclick="javascript:removeAllSkills();"><span class="fa fa-ban"></span></button></th>
+                <th><button class="pure-button" onclick="javascript:removeAllSkills();" title="Removes all skills."><span class="fa fa-ban"></span></button></th>
                 <th class="header-text">Skills</th>
-                <th><button class="pure-button" onclick="javascript:activateIdle();"><span class="fa fa-plus-circle"></span></button></th>
+                <th><button class="pure-button" title="Currently does nothing. Might do something interesting in the future."><span class="fa fa-plus-circle"></span></button></th>
             </tr>
         </thead>
 
@@ -185,8 +185,8 @@
         <tfoot>
             <tr>
                 <td><button class="pure-button button-delete pure-button-disabled"><span class="fa fa-ban"></span></button></td>
-                <td><input type="text" placeholder="New Skill" id="newSkill" onkeydown="if (event.keyCode == 13) newSkill();"></input></td>
-                <td><button class="pure-button button-plus" onclick="javascript:newSkill();"><span class="fa fa-plus-circle"></span></button></td>
+                <td><input type="text" placeholder="New Skill" id="newSkill" onkeydown="if (event.keyCode == 13) newSkill();" title="Input the name for a new skill."></input></td>
+                <td><button class="pure-button button-plus" onclick="javascript:newSkill();" title="Add a new skill!"><span class="fa fa-plus-circle"></span></button></td>
             </tr>
         </tfoot>
     </table>

@@ -79,7 +79,7 @@
             element.setAttribute("id", "id" + nextID); //this is shit and I feel like shit
             element.className = priorityClass;
 
-            element.innerHTML = "<td><button class='pure-button button-done' onclick='javascript:removeTask(\"{0}\", \"{1}\");'><span class='fa fa-check-circle'></span></button></td><td>{0}</td><td><select onchange='changePriority(\"{0}\", \"{1}\", arguments[0]);'><option value='0'>None</option><option value='1'>(1) Maximum</option><option value='2'>(2) High</option><option value='3'>(3) Medium</option><option value='4'>(4) Low</option><option value='5'>(5) Minimum</option></select></td>".format(task, "id"+nextID);
+            element.innerHTML = "<td><button class='pure-button button-done' onclick='javascript:removeTask(\"{0}\", \"{1}\");' title='Mark this task done (delete it).'><span class='fa fa-check-circle'></span></button></td><td>{0}</td><td><select onchange='changePriority(\"{0}\", \"{1}\", arguments[0]);' title='Select task priority.'><option value='0'>None</option><option value='1'>(1) Maximum</option><option value='2'>(2) High</option><option value='3'>(3) Medium</option><option value='4'>(4) Low</option><option value='5'>(5) Minimum</option></select></td>".format(task, "id"+nextID);
 
             //convoluted as fuck: Tr -> Td -> Select -> Option[priority] -> "selected"
             element.childNodes[2].childNodes[0].childNodes[priorityClass.slice(8)].setAttribute("selected", "selected");
@@ -171,9 +171,9 @@
     <table class="pure-table centered">
         <thead>
             <tr>
-                <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();"><span class="fa fa-ban"></span></button></th>
+                <th><button class="pure-button button-delete" onclick="javascript:removeAllTasks();" title="Remove all tasks."><span class="fa fa-ban"></span></button></th>
                 <th class="header-text">Tasks</th>
-                <th><button class="pure-button button-info"><span class="fa fa-exclamation-circle"></span></button></th>
+                <th><button class="pure-button button-info" title="Does nothing. Might do something in the future."><span class="fa fa-exclamation-circle"></span></button></th>
             </tr>
         </thead>
 
@@ -181,10 +181,10 @@
 
         <tfoot>
             <tr id="newTaskRow" class="priority0">
-                <td><button class="pure-button button-new" onclick="javascript:newTask();"><span class="fa fa-plus-circle"></span></button></td>
-                <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();"></input></td>
+                <td><button class="pure-button button-new" onclick="javascript:newTask();" title="Create new task!"><span class="fa fa-plus-circle"></span></button></td>
+                <td><input type="text" placeholder="New Task" id="newTask" onkeydown="if (event.keyCode == 13) newTask();" title="Input the text of a new task."></input></td>
                 <td>
-                    <select onchange="changePriority(null, 'newTaskRow', arguments[0]);">
+                    <select onchange="changePriority(null, 'newTaskRow', arguments[0]);" title="Select the priority of this task.">
                         <option value="0" selected>None</option>
                         <option value="1">(1) Maximum</option>
                         <option value="2">(2) High</option>
