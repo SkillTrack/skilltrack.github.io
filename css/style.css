@@ -50,3 +50,22 @@
 .priority5 {
     background: rgb(200, 200, 255); /* light blue */
 }
+
+
+
+#footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 5px;
+    width: 100%;
+    font-family: monospace;
+    text-align: center;
+    background: #DDD;
+}
+#footer a {
+    text-decoration: none;
+}
+#footer a:visited {
+    color: blue;
+}
